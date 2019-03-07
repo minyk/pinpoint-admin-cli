@@ -11,7 +11,7 @@ import (
 	"bytes"
 	"crypto/tls"
 	"crypto/x509"
-	"fmt"
+	"github.com/mesosphere/dcos-commons/cli/client"
 	"github.com/minyk/pinpoint-cli/config"
 	"io/ioutil"
 	"net/http"
@@ -134,7 +134,7 @@ func CreateServiceHTTPJSONRequest(method, urlPath string, jsonPayload []byte) *h
 
 // CreateServiceHTTPDataRequest creates a service HTTP data request
 func CreateServiceHTTPDataRequest(method, urlPath string, jsonPayload []byte, contentType string) *http.Request {
-	return CreateHTTPRawRequest(method, CreatePinpointURL(urlPath,""), jsonPayload, "", contentType)
+	return CreateHTTPRawRequest(method, CreatePinpointURL(urlPath, ""), jsonPayload, "", contentType)
 }
 
 // CreateServiceHTTPQueryRequest creates a service HTTP query request
@@ -144,7 +144,7 @@ func CreateServiceHTTPQueryRequest(method, urlPath, urlQuery string) *http.Reque
 
 // CreateServiceHTTPRequest creates a service HTTP request
 func CreateServiceHTTPRequest(method, urlPath string) *http.Request {
-	return CreateHTTPRawRequest(method, CreatePinpointURL(urlPath,""), nil, "", "")
+	return CreateHTTPRawRequest(method, CreatePinpointURL(urlPath, ""), nil, "", "")
 }
 
 // CreateHTTPRawRequest creates an HTTP request
@@ -164,7 +164,10 @@ func CreateHTTPRawRequest(method string, url *url.URL, payload []byte, accept, c
 
 // CreateMesosURL creates a service URL of the form http://clusterurl.com/mesos/api/v1
 func CreatePinpointURL(urlPath, urlQuery string) *url.URL {
-	return CreateURL(config.PinpointURL.String(), urlPath, urlQuery + "&password=" + config.PinpointPassword)
+	client.PrintVerbose("Pinpoint: %s", config.PinpointURL.String())
+	client.PrintVerbose("urlPath: %s", urlPath)
+	client.PrintVerbose("urlQuery: %s", urlQuery)
+	return CreateURL(config.PinpointURL.String(), urlPath, urlQuery+"&password="+config.PinpointPassword)
 }
 
 //// CreateMesosURL creates a service URL of the form http://clusterurl.com/mesos/api/v1
@@ -197,11 +200,7 @@ func CreateHTTPURLRequest(method string, url *url.URL, payload []byte, accept, c
 		PrintMessage("Failed to create HTTP %s request for %s: %s", method, url, err)
 		os.Exit(1)
 	}
-	// This value is optional: clusters can be configured to not require any auth
-	authToken := OptionalCLIConfigValue("core.dcos_acs_token")
-	if len(authToken) != 0 {
-		request.Header.Set("Authorization", fmt.Sprintf("token=%s", authToken))
-	}
+
 	if len(accept) != 0 {
 		request.Header.Set("Accept", accept)
 	}
@@ -218,7 +217,7 @@ func CreateHTTPURLRequest(method string, url *url.URL, payload []byte, accept, c
 
 // buildTLSConfig returns a new tls.Config object which honors the CLI 'ssl_verify' setting.
 func buildTLSConfig() *tls.Config {
-	rawTLSSetting := OptionalCLIConfigValue("core.ssl_verify")
+	rawTLSSetting := "false" //OptionalCLIConfigValue("core.ssl_verify")
 	if strings.EqualFold(rawTLSSetting, "false") {
 		// 'false' (case insensitive): disable cert validation
 		return &tls.Config{InsecureSkipVerify: true}

@@ -6,7 +6,6 @@ package cli
 
 import (
 	"fmt"
-	"github.com/minyk/pinpoint-cli/client"
 	"github.com/minyk/pinpoint-cli/commands"
 	"github.com/minyk/pinpoint-cli/config"
 	"github.com/minyk/pinpoint-cli/queries"
@@ -27,10 +26,10 @@ func GetModuleName() (string, error) {
 // GetArguments returns an array of the arguments passed into this CLI.
 func GetArguments() []string {
 	// Exercise validation of argument count:
-	if len(os.Args) < 2 {
+	if len(os.Args) < 1 {
 		return make([]string, 0)
 	}
-	return os.Args[2:]
+	return os.Args[1:]
 }
 
 // HandleDefaultSections is a utility method to allow applications built around this library to provide
@@ -60,13 +59,14 @@ func New() *kingpin.Application {
 		}
 	}
 
-	var err error
-	config.ModuleName, err = GetModuleName()
-	if err != nil {
-		client.PrintMessage(err.Error())
-		os.Exit(1)
-	}
-	app := kingpin.New(fmt.Sprintf("dcos %s", config.ModuleName), "")
+	//var err error
+	//config.ModuleName, err = GetModuleName()
+	//if err != nil {
+	//	client.PrintMessage(err.Error())
+	//	os.Exit(1)
+	//}
+	//app := kingpin.New(fmt.Sprintf("pinpoint-cli %s", config.ModuleName), "")
+	app := kingpin.New("pinpoint-cli", "")
 
 	app.GetFlag("help").Short('h') // in addition to default '--help'
 
@@ -80,40 +80,6 @@ func New() *kingpin.Application {
 		os.Exit(0)
 		return nil
 	}).Bool()
-	// Prints a description of the module config schema (only a 'service_name' option).
-//	app.Flag("config-schema", "Show config schema.").Hidden().PreAction(func(*kingpin.Application, *kingpin.ParseElement, *kingpin.ParseContext) error {
-//		fmt.Fprint(os.Stdout, `{
-//  "$schema": "http://json-schema.org/schema#",
-//  "additionalProperties": false,
-//  "properties": { "service_name": { "title": "Service name", "type": "string" } },
-//  "type": "object"
-//}
-//`)
-//		os.Exit(0)
-//		return nil
-//	}).Bool()
-
-	// Support envvars documented by the main DC/OS CLI to select the correct cluster config.
-	// These flags are hidden from help output as the main interface is the envvars.
-	// See also: https://dcos.io/docs/1.10/cli/#environment-variables
-
-	// Cluster name override: specify name of added but unattached cluster config
-	//app.Flag("custom-cluster-name", "Name of a configured cluster, otherwise the attached cluster is used").Hidden().Envar("DCOS_CLUSTER").PlaceHolder("DCOS_CLUSTER").StringVar(&config.DcosClusterName)
-	// Config root dir override: direct path to .dcos/ contents
-	//app.Flag("custom-config-dir", "Path to DC/OS config directory").Hidden().Envar("DCOS_DIR").PlaceHolder("DCOS_DIR").StringVar(&config.DcosConfigRootDir)
-	// Config file override: direct path to a .toml file. Only takes effect if no 0.5.x-style cluster configs are found.
-	//app.Flag("custom-cluster-config", "Path to DC/OS config .toml file, if no clusters are configured").Hidden().Envar("DCOS_CONFIG").PlaceHolder("DCOS_CONFIG").StringVar(&config.DcosConfigPath)
-
-	// Default to --name <name> : use provided framework name (default to <modulename>.service_name, if available)
-	//serviceName := client.OptionalCLIConfigValue(fmt.Sprintf("%s.service_name", config.ModuleName))
-	//if len(serviceName) == 0 {
-	//	// No <modulename>.service_name setting was found.
-	//	// Guess the default service name based off the module/package name itself.
-	//	// In particular, if the module/package is named 'beta-foo', then use a default of 'foo'.
-	//	// This aligns with the convention for service names used by 'beta-' packages.
-	//	serviceName = strings.TrimPrefix(config.ModuleName, "beta-")
-	//}
-	//app.Flag("name", "Name of the service instance to query").Default(serviceName).StringVar(&config.ServiceName)
 
 	app.Flag("pinpoint", "URL of Target Pinpoint. e.g. http://pinpoint:8080").PreAction(commands.CheckURL).URLVar(&config.PinpointURL) //.StringVar(&config.PinpointURL)
 
