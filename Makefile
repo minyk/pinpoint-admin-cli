@@ -17,10 +17,10 @@ clean-windows:
 	rm -f ./build/dcos-resources-windows.exe
 
 linux: clean-linux
-	docker run --rm -e "GOOS=linux" -e "GOARCH=amd64" -v $(PWD):/usr/src/github.com/minyk/dcos-resources -w /usr/src/github.com/minyk/dcos-resources golang:1.11 go build -ldflags="-s -w ${GO_LDFLAGS}" -v -o build/dcos-resources-linux
+	docker run --rm -e "GOOS=linux" -e "GOARCH=amd64" -v $(PWD):/usr/src/github.com/minyk/pinpoint-cli -w /usr/src/github.com/minyk/pinpoint-cli golang:1.11 go build -ldflags="-s -w ${GO_LDFLAGS}" -v -o build/pinpoint-cli-linux
 
 darwin: clean-darwin
-	docker run --rm -e "GOOS=darwin" -e "GOARCH=amd64" -v $(PWD):/usr/src/github.com/minyk/dcos-resources -w /usr/src/github.com/minyk/dcos-resources golang:1.11 go build -ldflags="-s -w ${GO_LDFLAGS}" -v -o build/dcos-resources-darwin
+	docker run --rm -e "GOOS=darwin" -e "GOARCH=amd64" -v $(PWD):/usr/src/github.com/minyk/pinpoint-cli -w /usr/src/github.com/minyk/pinpoint-cli golang:1.11 go build -ldflags="-s -w ${GO_LDFLAGS}" -v -o build/pinpoint-cli-darwin
 
 windows: clean-windows
-	docker run --rm -e "GOOS=linux" -e "GOARCH=amd64" -v $(PWD):/usr/src/github.com/minyk/dcos-resources -w /usr/src/github.com/minyk/dcos-resources golang:1.11 go build -ldflags="-s -w ${GO_LDFLAGS}" -v -o build/dcos-resources-windows.exe
+	docker run --rm -e "GOOS=linux" -e "GOARCH=amd64" -v $(PWD):/usr/src/github.com/minyk/pinpoint-cli -w /usr/src/github.com/minyk/pinpoint-cli golang:1.11 go build -ldflags="-s -w ${GO_LDFLAGS}" -v -o build/pinpoint-cli-windows.exe
