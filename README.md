@@ -1,7 +1,7 @@
-DC/OS CLI Subcommand for mesos resource reserve/unreserve
-==========================================
+Pinpoint Admin CLI
+==================
 
-**CAUTION: This is not battle-hardened yet. USE AT YOUR OWN RISK.** 
+**CAUTION: This is not battle-hardened yet. USE AT YOUR OWN RISK.**
 
 # pinpoint-cli
 
